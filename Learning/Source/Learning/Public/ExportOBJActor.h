@@ -16,32 +16,39 @@ class LEARNING_API AExportOBJActor : public AActor {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(EditAnywhere, meta = (ToolTip = "a mesh name in the scene"))
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "待导出的Mesh在场景中的名称"))
     FString meshName = "Table";
 
-    UPROPERTY(EditAnywhere, meta = (ToolTip = "path root of the output file"))
-    FString filePathRoot = "D://Default//Desktop//";
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "导出路径"))
+    FString filePathRoot = "D://Default//Desktop//OutputOBJ//";
 
     AExportOBJActor();
 
-protected:
-    virtual void BeginPlay() override;
+    // 将静态网格体导出为OBJ文件
+    void ExportMeshToOBJ();
 
 private:
-    // 将静态网格体导出为OBJ文件
-    void OutputMeshToOBJ();
+    UStaticMesh* meshData;
+    std::vector<FVector3f> outPositions;    // 顶点位置
+    std::vector<FVector3f> outNormals;      // 顶点法线
+    std::vector<FVector2f> outUVs;          // 顶点UV坐标
+    FString mtlName;                        // 只考虑只有一个材质
+    std::map<FString, FString> mtlFiles;    // 但是材质对应的纹理可能有多个, 将其路径保存在mtlFiles映射表里
+
     // 获取静态网格体的数据
-    void AnalyseStaticMesh(AStaticMeshActor* mesh, UStaticMesh* meshData);
+    void AnalyseStaticMesh();
     // 从MeshData中获取三角形位置、法线、UV坐标等属性
-    void GetTriangleDataFromMeshData(
-        UStaticMesh* meshData, std::vector<FVector3f>& outPositions, std::vector<FVector3f>& outNormals, std::vector<FVector2f>& outUVs);
+    void GetTriangleDataFromMeshData();
     // 从MeshData中获取STL材质
-    void GetMTLFromMeshData(UStaticMesh* meshData, FString& mtlName, std::map<FString, FString>& mtlFiles);
+    void GetMTLFromMeshData();
+    
+    // 输出网格体的基础信息: LOD层级数、顶点数、三角形面数
+    void LogBasicData();
+    
     // 获取纹理信息, 并通过loadpng库导出为png文件
     FString ExportToPNGFile(TArray<UTexture*> textures);
-    // 导出OBJ文件
-    void ExportToOBJFile(FString mtlName, std::vector<FVector3f>& outPositions, std::vector<FVector3f>& outNormals,
-        std::vector<FVector2f>& outUVs);
     // 导出MTL文件
-    void ExportToMTLFile(FString& mtlName, std::map<FString, FString>& mtlFiles);
+    void ExportToMTLFile();
+    // 导出OBJ文件
+    void ExportToOBJFile();
 };

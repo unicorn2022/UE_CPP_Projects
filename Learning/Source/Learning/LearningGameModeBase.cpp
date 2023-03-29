@@ -4,8 +4,9 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
-#include "./Learning/Public/ImportOBJActor.h"
 #include "./Learning/Public/MyActor.h"
+#include "./Learning/Public/ExportOBJActor.h"
+#include "./Learning/Public/ImportOBJActor.h"
 
 void ALearningGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) {
     Super::InitGame(MapName, Options, ErrorMessage);
@@ -15,7 +16,7 @@ void ALearningGameModeBase::InitGame(const FString& MapName, const FString& Opti
 
 void ALearningGameModeBase::StartPlay() {
     // 创建一个Actor
-    // CreateActor();
+    CreateActor();
 
     Super::StartPlay();
 }
@@ -35,15 +36,18 @@ void ALearningGameModeBase::OutputTime() {
 void ALearningGameModeBase::CreateActor() {
     // 生成参数
     FActorSpawnParameters spawnParams;
-    spawnParams.Name = "NewActor01";
+    spawnParams.Name = "ExportActor";
     spawnParams.Owner = this;
     // 位置、旋转
     FVector position = FVector(0.0f, 0.0f, 0.0f);
     FRotator rotation = FRotator(00.0f, 0.0f, 0.0f);
     // 生成Actor
-    AImportOBJActor* instance = GetWorld()->SpawnActor<AImportOBJActor>(position, rotation, spawnParams);
+    AExportOBJActor* instance = GetWorld()->SpawnActor<AExportOBJActor>(position, rotation, spawnParams);
     // 修改Actor在大纲视图下的显示名称
-    instance->SetActorLabel("NewActor01");
+    instance->SetActorLabel("ExportActor");
+
+    // 导出OBJ文件
+    instance->ExportMeshToOBJ();
 
     UE_LOG(LogTemp, Warning, TEXT("新建Actor: %s"), *(instance->GetName()));
 }
