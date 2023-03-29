@@ -16,7 +16,10 @@ AExportOBJActor::AExportOBJActor() {
     PrimaryActorTick.bCanEverTick = false;
 }
 
-
+void AExportOBJActor::BeginPlay() {
+    Super::BeginPlay();
+    ExportMeshToOBJ();
+}
 
 // 将静态网格体导出为OBJ文件
 void AExportOBJActor::ExportMeshToOBJ() {
@@ -26,10 +29,14 @@ void AExportOBJActor::ExportMeshToOBJ() {
     AStaticMeshActor* mesh = nullptr;
     for (TActorIterator<AStaticMeshActor> it(GetWorld()); it; ++it) {
         mesh = *it;
-        if (mesh->GetName() == meshName) break;
+        if (mesh->GetActorLabel().Equals(meshName)) break;
     }
-    if (!mesh) return;
+    if (!mesh->GetActorLabel().Equals(meshName)) {
+        UE_LOG(LogExportOBJActor, Error, TEXT("---! 未找到目标网格体: %s, 导出失败 !---"), *meshName);
+        return;
+    }
 
+    UE_LOG(LogExportOBJActor, Warning, TEXT("找到目标网格体: %s"), *mesh->GetActorLabel());
     // 获取静态网格体数据
     UStaticMeshComponent* component = mesh->GetStaticMeshComponent();
     if (!component) {
@@ -40,11 +47,6 @@ void AExportOBJActor::ExportMeshToOBJ() {
     AnalyseStaticMesh();
     
     UE_LOG(LogExportOBJActor, Warning, TEXT("---! 网格体 %s 导出结束 !---"), *meshName);
-}
-
-void AExportOBJActor::BeginPlay() {
-    Super::BeginPlay();
-    ExportMeshToOBJ();
 }
 
 // 获取静态网格体的数据
@@ -129,7 +131,7 @@ void AExportOBJActor::GetMTLFromMeshData() {
         // 颜色贴图
         TArray<UTexture*> textures_BaseColor;
         mtl->GetTexturesInPropertyChain(EMaterialProperty::MP_BaseColor, textures_BaseColor, NULL, NULL);
-        mtlFiles["map_Ka"] = ExportToPNGFile(textures_BaseColor);
+        mtlFiles["map_Kd"] = mtlFiles["map_Ka"] = ExportToPNGFile(textures_BaseColor);
         // 法线贴图
         TArray<UTexture*> textures_Normal;
         mtl->GetTexturesInPropertyChain(EMaterialProperty::MP_Normal, textures_Normal, NULL, NULL);

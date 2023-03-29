@@ -3,7 +3,6 @@
 #include "ImportOBJActor.h"
 #include <StaticMeshAttributes.h>
 #include <MeshDescriptionBuilder.h>
-#define TINYOBJLOADER_IMPLEMENTATION
 #include "Learning/tiny_obj_loader.h"
 #include "Learning/lodepng.h"
 
@@ -48,7 +47,8 @@ UStaticMesh* AImportOBJActor::CreateMeshDataFromFile(const FString& baseDir, con
     std::vector<tinyobj::shape_t> shapes;       // OBJ文件中的图元组(UE中的多边形组), 每个图元组对应一种材质
     std::vector<tinyobj::material_t> materials; // OBJ文件中的材质
     std::string err;
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, TCHAR_TO_UTF8(*(baseDir + file)), TCHAR_TO_UTF8(*baseDir), true);
+    std::string warn;
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, &warn, TCHAR_TO_UTF8(*(baseDir + file)), TCHAR_TO_UTF8(*baseDir), true);
     if (!ret) {
         UE_LOG(LogImportOBJActor, Error, TEXT("tinyobj::LoadObj 失败, 提示信息为: %s"), UTF8_TO_TCHAR(err.c_str()));
         return staticMesh;
@@ -131,9 +131,9 @@ UStaticMesh* AImportOBJActor::CreateMeshDataFromFile(const FString& baseDir, con
                 // 顶点法线
                 if (idx.normal_index >= 0) {
                     triVertex[v].normal = FVector(
-                        -attrib.normals[3 * idx.normal_index + 0],
-                        -attrib.normals[3 * idx.normal_index + 1], 
-                        -attrib.normals[3 * idx.normal_index + 2]);
+                        attrib.normals[3 * idx.normal_index + 0],
+                        attrib.normals[3 * idx.normal_index + 1], 
+                        attrib.normals[3 * idx.normal_index + 2]);
                 }
                 // 顶点UV坐标(-!--注意要翻转Y轴--!-)
                 if (idx.texcoord_index >= 0) {
