@@ -7,6 +7,7 @@
 #include <StaticMeshAttributes.h>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include "./Learning/lodepng.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogExportOBJActor, All, All);
@@ -14,6 +15,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogExportOBJActor, All, All);
 AExportOBJActor::AExportOBJActor() {
     PrimaryActorTick.bCanEverTick = false;
 }
+
+
 
 // 将静态网格体导出为OBJ文件
 void AExportOBJActor::ExportMeshToOBJ() {
@@ -37,6 +40,11 @@ void AExportOBJActor::ExportMeshToOBJ() {
     AnalyseStaticMesh();
     
     UE_LOG(LogExportOBJActor, Warning, TEXT("---! 网格体 %s 导出结束 !---"), *meshName);
+}
+
+void AExportOBJActor::BeginPlay() {
+    Super::BeginPlay();
+    ExportMeshToOBJ();
 }
 
 // 获取静态网格体的数据
@@ -196,7 +204,7 @@ FString AExportOBJActor::ExportToPNGFile(TArray<UTexture*> textures) {
         } else {
             UE_LOG(LogExportOBJActor, Warning, TEXT("--! 导出MTL文件成功, 路径为 %s !--"), *filePath);
         }
-        resultFileName = UTF8_TO_TCHAR((fileName + ".png").c_str());
+        resultFileName = *(texture2D->GetFName().ToString() + ".png");
 
         // 将纹理参数设置回原状
         texture2D->CompressionSettings = prevCompression;
@@ -244,6 +252,7 @@ void AExportOBJActor::ExportToOBJFile() {
     out << std::endl;
     
     // 顶点位置
+    out << std::setprecision(4) << std::fixed;
     for (size_t i = 0; i < outPositions.size(); ++i) {
         const FVector3f& v = outPositions[i];
         out << "v " 

@@ -10,7 +10,7 @@ public class Learning : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
             "Core", "CoreUObject", "Engine", "InputCore",
-            "MeshDescription", "StaticMeshDescription", "MeshConversion"
+            "MeshDescription", "MeshDescriptionOperations", "StaticMeshDescription", "MeshConversion"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

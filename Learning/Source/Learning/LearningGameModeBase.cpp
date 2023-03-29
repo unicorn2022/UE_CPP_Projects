@@ -16,7 +16,7 @@ void ALearningGameModeBase::InitGame(const FString& MapName, const FString& Opti
 
 void ALearningGameModeBase::StartPlay() {
     // 创建一个Actor
-    CreateActor();
+    //CreateActor();
 
     Super::StartPlay();
 }
@@ -47,6 +47,7 @@ void ALearningGameModeBase::CreateActor() {
     instance->SetActorLabel("ExportActor");
 
     // 导出OBJ文件
+    instance->meshName = "Table";
     instance->ExportMeshToOBJ();
 
     UE_LOG(LogTemp, Warning, TEXT("新建Actor: %s"), *(instance->GetName()));

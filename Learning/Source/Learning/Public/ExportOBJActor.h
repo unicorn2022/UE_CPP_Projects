@@ -27,6 +27,9 @@ public:
     // 将静态网格体导出为OBJ文件
     void ExportMeshToOBJ();
 
+protected:
+    virtual void BeginPlay() override;
+
 private:
     UStaticMesh* meshData;
     std::vector<FVector3f> outPositions;    // 顶点位置

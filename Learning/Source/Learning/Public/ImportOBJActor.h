@@ -16,16 +16,19 @@ class LEARNING_API AImportOBJActor : public AActor {
 public:
     AImportOBJActor();
 
-    UPROPERTY(EditAnywhere, meta = (ToolTip = "a mesh name in the scene"))
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "å¾…å¯¼å…¥çš„Meshåœ¨åœºæ™¯ä¸­çš„åç§°"))
     FString meshName = "Mesh";
 
-    UPROPERTY(EditAnywhere, meta = (ToolTip = "path root of the output file"))
-    FString filePathRoot = "D://Default//Desktop//TestModels//";
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "å¯¼å…¥OBJæ–‡ä»¶çš„è·¯å¾„"))
+    FString filePathRoot = "D://Default//Desktop//OutputOBJ//";
 
-    UPROPERTY(EditAnywhere, meta = (ToolTip = "path root of the output file"))
-    FString objFileName = "Minimal_Default.obj";
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "å¯¼å…¥OBJæ–‡ä»¶çš„åç§°"))
+    FString objFileName = "result_ryota.obj";
 
-    // ¾²Ì¬Íø¸ñÌå×é¼ş
+    UPROPERTY(EditAnywhere, meta = (ToolTip = "æè´¨èµ„äº§è·¯å¾„"))
+    FString materialPath = "Material '/Game/BasicTexture.BasicTexture'";
+
+    // é™æ€ç½‘æ ¼ä½“ç»„ä»¶
     UPROPERTY(VisibleAnywhere)
     UStaticMeshComponent* _mesh;
 
@@ -36,29 +39,30 @@ public:
     virtual void Tick(float DeltaTime) override;
 
 private:
-    // µ±Ç°²ÎÓë¹¹½¨¼¸ºÎÌåµÄÖ÷Òª¶ÔÏó
+    // å½“å‰å‚ä¸æ„å»ºå‡ ä½•ä½“çš„ä¸»è¦å¯¹è±¡
     struct GlobalData {
-        FMeshDescriptionBuilder* builder;
-        TArray<FVertexID> vertexIDs;
-        FPolygonGroupID polygonGroup;
+        FMeshDescriptionBuilder* builder;   // MeshDescriptionBuilder å¯¹è±¡
+        TArray<FVertexID> vertexIDs;        // é¡¶ç‚¹ID
+        FPolygonGroupID polygonGroup;       // å¤šè¾¹å½¢ç»„
     };
-    // ÒªÊäÈë¸øVertexInstanceµÄ¶¥µãÊôĞÔÊı¾İ
+    // ä¸‰è§’å½¢é¡¶ç‚¹å®ä¾‹æ•°æ®
     struct TriangleVertex {
-        int vertexIndex;
-        FVector instanceNormal;
-        FVector2D instanceUV;
+        int vertexIndex;    // é¡¶ç‚¹ç¼–å·
+        FVector normal;     // é¡¶ç‚¹æ³•çº¿
+        FVector2D UV;       // é¡¶ç‚¹UVè´´å›¾
+        FVector4f Color = FVector4f(1.0f, 1.0f, 1.0f, 1.0f); // é¡¶ç‚¹é¢œè‰²
     };
 
-    // ÎÆÀí±àºÅ
+    // æ˜ å°„: å¤šè¾¹å½¢ç»„ => æè´¨åç§°
     std::map<FPolygonGroupID, std::string> _materialIdMap;
-    // ÎÆÀíÊµÀı
+    // æ˜ å°„: æè´¨åç§° => æè´¨å®ä¾‹
     std::map<std::string, UMaterialInstanceDynamic*> _materialMap;
 
 private:
-    // ´´½¨Íø¸ñÌåÊı¾İ
+    // åˆ›å»ºç½‘æ ¼ä½“æ•°æ®
     UStaticMesh* CreateMeshDataFromFile(const FString& baseDir, const FString& file);
-    // ´´½¨ÎÆÀí
+    // è¯»å–ç£ç›˜ä¸Šçš„PNGå›¾ç‰‡, åˆ›å»ºçº¹ç†
     UTexture2D* CreateTexture(const FString& baseDir, const FString& file);
-    // Ïò¼¸ºÎÌåÖĞÌí¼ÓÈı½ÇÃæĞÅÏ¢
+    // å‘å‡ ä½•ä½“ä¸­æ·»åŠ ä¸‰è§’é¢ä¿¡æ¯
     void AddTriangleData(GlobalData& globalData, const TriangleVertex& v1, const TriangleVertex& v2, const TriangleVertex& v3);
 };
