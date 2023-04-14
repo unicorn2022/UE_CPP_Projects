@@ -2,6 +2,8 @@
 
 #include "MyActor.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogMyActor, All, All);
+
 AMyActor::AMyActor() {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -19,6 +21,8 @@ AMyActor::AMyActor() {
         _mesh->SetStaticMesh(cubeAsset.Object);
         _mesh->SetRelativeLocation(FVector(0.0f));
     }
+
+    UsePython();
 }
 
 void AMyActor::BeginPlay() {
@@ -31,4 +35,8 @@ void AMyActor::Tick(float DeltaTime) {
     SetActorRotation(rotation);
 
     Super::Tick(DeltaTime);
+}
+
+void AMyActor::UsePython() {
+
 }
